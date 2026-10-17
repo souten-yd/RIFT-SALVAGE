@@ -640,24 +640,54 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     drawGroundLayer(frame);drawStructureLayer(frame);drawPropsLayer(frame);drawUnitLayer(frame);drawEffectsLayer(frame);drawFogLayer(frame);drawTacticalLayer(frame);
   }
   function eachCell(f,visit){for(let y=f.bounds.y;y<f.bounds.y+VIEW_H+5;y++)for(let x=f.bounds.x;x<f.bounds.x+VIEW_W+5;x++){if(!inBounds(x,y))continue;const [px,py]=worldToScreen(x,y);visit(x,y,px,py,tile(x,y));}}
+  // Material coordinates are independent of collision cells. Adjacent cache chunks
+  // evaluate the same world-pixel field, so neither tiles nor cache borders show.
+  function floorPixel(x,y){
+    const band=Math.floor(y/137),offset=(hash(band,23,81)%101),u=x+offset;
+    const plate=Math.floor(u/193),seamY=y%137,seamX=((u%193)+193)%193;
+    const coarse=hash(Math.floor(x/9),Math.floor(y/7),83)%7;
+    const grain=hash(x,y,89)%5;
+    const brushed=hash(Math.floor(x/17),y,91)%4;
+    // Broad, irregular oil clouds with dithered edges; no tile-coordinate inputs.
+    const oil=(Math.sin(x*.027+Math.sin(y*.039)*1.7)+Math.cos(y*.033-x*.009));
+    const wet=oil>1.15+(grain-2)*.08;
+    let v=coarse+grain+brushed+(hash(plate,band,97)%5);
+    if(wet)v-=9;
+    if(seamY===0||seamX===0)v-=10;
+    if(seamY===1||seamX===1)v+=5;
+    if((seamY===5||seamY===131)&&(seamX===5||seamX===187))v+=24;
+    // Short chipped horizontal highlights, grouped into sparse pixel clusters.
+    if(hash(Math.floor(x/11),y,101)%137===0&&x%11<7)v+=14;
+    // Paired service cables snake across plate seams instead of following cells.
+    const cable=((x+Math.round(Math.sin(y*.009)*19)+Math.floor(y/211)*3)%431+431)%431;
+    if(cable<2||cable===5)v-=15;
+    if(cable===2||cable===6)v+=9;
+    return [Math.max(6,17+v),Math.max(13,29+v),Math.max(20,37+v)];
+  }
   function drawGroundLayer(f){
-    // 5x5 chunks at 96px/tile. Only viewport chunks are sampled; bounded full-map cache.
-    const n=5,sz=96;
+    // 48 world pixels per cell gives readable pixel clusters at mobile scale.
+    // 49 bounded 240px chunks: ~11 MiB, a quarter of the former terrain cache.
+    const n=5,sz=48;
     for(let cy=Math.floor(f.bounds.y/n);cy<=Math.floor((f.bounds.y+VIEW_H+4)/n);cy++)for(let cx=Math.floor(f.bounds.x/n);cx<=Math.floor((f.bounds.x+VIEW_W+4)/n);cx++){
       if(cx<0||cy<0||cx>=7||cy>=7)continue;
       const key=cx+','+cy;let chunk=chunks.get(key);
-      if(!chunk){chunk=document.createElement('canvas');chunk.width=n*sz;chunk.height=n*sz;const g=chunk.getContext('2d');g.imageSmoothingEnabled=false;g.fillStyle='#0c171f';g.fillRect(0,0,chunk.width,chunk.height);
+      if(!chunk){chunk=document.createElement('canvas');chunk.width=n*sz;chunk.height=n*sz;const g=chunk.getContext('2d');g.imageSmoothingEnabled=false;
+        const pixels=g.createImageData(chunk.width,chunk.height);
+        for(let py=0;py<chunk.height;py++)for(let px=0;px<chunk.width;px++){
+          const c=floorPixel(cx*n*sz+px,cy*n*sz+py),i=(py*chunk.width+px)*4;
+          pixels.data[i]=c[0];pixels.data[i+1]=c[1];pixels.data[i+2]=c[2];pixels.data[i+3]=255;
+        }g.putImageData(pixels,0,0);
         for(let yy=0;yy<n;yy++)for(let xx=0;xx<n;xx++){
-          const x=cx*n+xx,y=cy*n+yy,wall=tile(x,y)===0;
+          const x=cx*n+xx,y=cy*n+yy;
+          if(tile(x,y)!==0)continue;
           if(art.status==='ready'){
-            const mask=dirs.reduce((v,[dx,dy],i)=>v|(open(x+dx,y+dy)?1<<i:0),0);
-            const index=wall?12+mask:((x%5===0)?1+(y%2)*4:(y%6===0&&x%3===0)?8:hash(Math.floor(x/2),Math.floor(y/2),s.contract+71)%3===0?7:hash(x,y,71)%2*4);
+            const mask=dirs.reduce((v,[dx,dy],i)=>v|(open(x+dx,y+dy)?1<<i:0),0),index=12+mask;
             g.drawImage(art.images['environment.png'],index%8*96,Math.floor(index/8)*96,96,96,xx*sz,yy*sz,sz,sz);
-          }else g.drawImage(getTile(wall,x,y),xx*sz,yy*sz,sz,sz);
-          if(!wall){g.fillStyle='#030c1638';g.fillRect(xx*sz,yy*sz,sz,sz);}
+          }else g.drawImage(getTile(true,x,y),xx*sz,yy*sz,sz,sz);
         }chunks.set(key,chunk);
       }
-      const [x,y]=worldToScreen(cx*n,cy*n);ctx.drawImage(chunk,Math.floor(x),Math.floor(y),Math.ceil(n*f.t)+1,Math.ceil(n*f.t)+1);
+      const [x,y]=worldToScreen(cx*n,cy*n),[right,bottom]=worldToScreen((cx+1)*n,(cy+1)*n);
+      ctx.drawImage(chunk,Math.round(x),Math.round(y),Math.round(right)-Math.round(x),Math.round(bottom)-Math.round(y));
     }
   }
   function coverKind(x,y){if(s.showcase){if(x===21&&y===17)return 'tank';if(x===12&&y===21)return 'pipe';}return ['crate','stack','barrel'][hash(x,y)%3];}
@@ -765,13 +795,30 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
       ctx.restore();
     }
   }
+  function fogEdge(direction){
+    const key='fog-'+direction;if(lightTextures.has(key))return lightTextures.get(key);
+    const c=document.createElement('canvas');c.width=c.height=16;const g=c.getContext('2d'),pixels=g.createImageData(16,16);
+    for(let y=0;y<16;y++)for(let x=0;x<16;x++){
+      const distance=[15-x,15-y,x,y][direction],i=(y*16+x)*4;
+      pixels.data[i]=3;pixels.data[i+1]=8;pixels.data[i+2]=13;
+      pixels.data[i+3]=Math.round(245*Math.pow(1-distance/15,2));
+    }g.putImageData(pixels,0,0);lightTextures.set(key,c);return c;
+  }
   function drawFogLayer(f){
-    // Last world pass clips lights, units and effects against current authoritative vision.
-    eachCell(f,(x,y,px,py)=>{const known=s.seen[y][x],visible=shownVision.has(x+','+y);if(visible)return;ctx.fillStyle=known?'#020811c9':'#03080d';ctx.fillRect(Math.floor(px),Math.floor(py),Math.ceil(f.t)+1,Math.ceil(f.t)+1);});
+    // Hidden cells remain fully clipped. Feather only INSIDE visible cells,
+    // concealing staircase edges without revealing any additional intelligence.
+    eachCell(f,(x,y,px,py)=>{const known=s.seen[y][x],visible=shownVision.has(x+','+y);
+      if(!visible){ctx.fillStyle=known?'#020811c9':'#03080d';ctx.fillRect(Math.floor(px),Math.floor(py),Math.ceil(f.t)+1,Math.ceil(f.t)+1);return;}
+      const width=f.t*.43;
+      for(const [dx,dy] of dirs){if(shownVision.has((x+dx)+','+(y+dy)))continue;
+        const direction=dx===1?0:dy===1?1:dx===-1?2:3;
+        ctx.drawImage(fogEdge(direction),px+(dx===1?f.t-width:0),py+(dy===1?f.t-width:0),dx?width:f.t,dy?width:f.t);
+      }
+    });
   }
   function drawTacticalLayer(f){
-    const [x,y]=worldToScreen(s.player.x,s.player.y);ctx.lineWidth=Math.max(1,f.t*.035);ctx.strokeStyle='#45e6e1';ctx.strokeRect(x+f.t*.06,y+f.t*.06,f.t*.88,f.t*.88);
-    if(mode==='move')for(const [dx,dy] of dirs){const gx=s.player.x+dx,gy=s.player.y+dy;if(!open(gx,gy)||entAt(gx,gy))continue;const [px,py]=worldToScreen(gx,gy);ctx.fillStyle='#45e6e114';ctx.fillRect(px+1,py+1,f.t-2,f.t-2);ctx.strokeStyle='#45e6e15a';ctx.strokeRect(px+2,py+2,f.t-4,f.t-4);}
+    const [x,y]=worldToScreen(s.player.x,s.player.y);ctx.lineWidth=Math.max(1,f.t*.035);ctx.strokeStyle='#45e6e1';ctx.beginPath();ctx.ellipse(x+f.t*.5,y+f.t*.85,f.t*.32,f.t*.12,0,0,Math.PI*2);ctx.stroke();
+    if(mode==='move')for(const [dx,dy] of dirs){const gx=s.player.x+dx,gy=s.player.y+dy;if(!open(gx,gy)||entAt(gx,gy))continue;const [px,py]=worldToScreen(gx,gy);ctx.fillStyle='#45e6e17a';const dot=Math.max(2,f.t*.08);ctx.fillRect(px+f.t*.5-dot/2,py+f.t*.68,dot,dot);}
     if(mode==='shoot')for(const e of s.enemies){if(e.hp<=0||!shownVision.has(e.x+','+e.y))continue;const [px,py]=worldToScreen(e.x,e.y);ctx.strokeStyle='#fc7979';ctx.strokeRect(px+f.t*.04,py+f.t*.04,f.t*.92,f.t*.92);}
     if(shownVision.has(s.exit.x+','+s.exit.y)){const [px,py]=worldToScreen(s.exit.x,s.exit.y);ctx.fillStyle='#8bffea';ctx.textAlign='center';ctx.font=`bold ${f.t*.24}px monospace`;ctx.fillText('B1 EXIT',px+f.t*.5,py+f.t*.98);}
   }

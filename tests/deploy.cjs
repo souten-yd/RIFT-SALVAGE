@@ -1,6 +1,6 @@
 const {serve}=require('./server.cjs'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto'),{execFileSync}=require('node:child_process');
 (async()=>{const server=await serve(path.resolve('_site'));const base=process.env.DEPLOY_URL||server.url+'/';const manifest=JSON.parse(fs.readFileSync('assets/v1/manifest.json'));const results=[];
-for(const file of ['index.html','space.js','assets/v1/manifest.json',...Object.keys(manifest.sha256).map(n=>'assets/v1/'+n)]){
+for(const file of ['index.html','space.js','vendor/three/three.module.min.js','vendor/three/three.core.min.js','assets/v1/manifest.json',...Object.keys(manifest.sha256).map(n=>'assets/v1/'+n)]){
 const target=new URL(file,base).href;let bytes,headers;
 if(process.env.DEPLOY_URL){const temp=path.resolve('test-results');fs.mkdirSync(temp,{recursive:true});execFileSync('curl',['--fail','--silent','--show-error','--location','--max-time','45','-D',temp+'/headers','-o',temp+'/body',target]);bytes=fs.readFileSync(temp+'/body');headers=fs.readFileSync(temp+'/headers','utf8');assert(/HTTP\/\S+ 200/.test(headers));}else{const r=await fetch(target);assert.equal(r.status,200);bytes=Buffer.from(await r.arrayBuffer());headers=r.headers.get('content-type');}
 assert(headers.includes(file.endsWith('.png')?'image/png':file.endsWith('.json')?'application/json':file.endsWith('.js')?'javascript':'text/html'));

@@ -1,0 +1,287 @@
+{
+  "version": 1,
+  "license": "Original project art; generated for RIFT SALVAGE. No third-party game assets.",
+  "source": [
+    "source/actors.png",
+    "source/environment.png"
+  ],
+  "pipeline": "python3 assets/v1/export.py (Pillow 12.3.0)",
+  "cell": [
+    96,
+    96
+  ],
+  "orientation": [
+    "east",
+    "south",
+    "west",
+    "north"
+  ],
+  "anchor": [
+    48,
+    83
+  ],
+  "bounds": [
+    0,
+    0,
+    96,
+    96
+  ],
+  "shadow": "runtime ellipse at foot anchor; not baked",
+  "actors": {
+    "hero": {
+      "file": "hero.png",
+      "size": [
+        768,
+        1248
+      ],
+      "columns": 8,
+      "frameCount": 100,
+      "states": {
+        "idle": {
+          "start": 0,
+          "frames": 4,
+          "durationMs": 1000,
+          "loop": true
+        },
+        "walk": {
+          "start": 16,
+          "frames": 8,
+          "durationMs": 280,
+          "loop": true
+        },
+        "attack": {
+          "start": 48,
+          "frames": 4,
+          "durationMs": 260,
+          "loop": false
+        },
+        "hit": {
+          "start": 64,
+          "frames": 3,
+          "durationMs": 210,
+          "loop": false
+        },
+        "death": {
+          "start": 76,
+          "frames": 6,
+          "durationMs": 560,
+          "loop": false
+        }
+      }
+    },
+    "guard": {
+      "file": "guard.png",
+      "size": [
+        768,
+        1056
+      ],
+      "columns": 8,
+      "frameCount": 88,
+      "states": {
+        "idle": {
+          "start": 0,
+          "frames": 4,
+          "durationMs": 1000,
+          "loop": true
+        },
+        "walk": {
+          "start": 16,
+          "frames": 6,
+          "durationMs": 280,
+          "loop": true
+        },
+        "attack": {
+          "start": 40,
+          "frames": 4,
+          "durationMs": 260,
+          "loop": false
+        },
+        "hit": {
+          "start": 56,
+          "frames": 3,
+          "durationMs": 210,
+          "loop": false
+        },
+        "death": {
+          "start": 68,
+          "frames": 5,
+          "durationMs": 560,
+          "loop": false
+        }
+      }
+    },
+    "brute": {
+      "file": "brute.png",
+      "size": [
+        768,
+        1152
+      ],
+      "columns": 8,
+      "frameCount": 96,
+      "states": {
+        "idle": {
+          "start": 0,
+          "frames": 4,
+          "durationMs": 1000,
+          "loop": true
+        },
+        "walk": {
+          "start": 16,
+          "frames": 6,
+          "durationMs": 280,
+          "loop": true
+        },
+        "attack": {
+          "start": 40,
+          "frames": 5,
+          "durationMs": 260,
+          "loop": false
+        },
+        "hit": {
+          "start": 60,
+          "frames": 3,
+          "durationMs": 210,
+          "loop": false
+        },
+        "death": {
+          "start": 72,
+          "frames": 6,
+          "durationMs": 560,
+          "loop": false
+        }
+      }
+    },
+    "crawler": {
+      "file": "crawler.png",
+      "size": [
+        768,
+        1056
+      ],
+      "columns": 8,
+      "frameCount": 88,
+      "states": {
+        "idle": {
+          "start": 0,
+          "frames": 4,
+          "durationMs": 1000,
+          "loop": true
+        },
+        "walk": {
+          "start": 16,
+          "frames": 6,
+          "durationMs": 280,
+          "loop": true
+        },
+        "attack": {
+          "start": 40,
+          "frames": 4,
+          "durationMs": 260,
+          "loop": false
+        },
+        "hit": {
+          "start": 56,
+          "frames": 3,
+          "durationMs": 210,
+          "loop": false
+        },
+        "death": {
+          "start": 68,
+          "frames": 5,
+          "durationMs": 560,
+          "loop": false
+        }
+      }
+    }
+  },
+  "environment": {
+    "crate": {
+      "index": 28,
+      "collision": "map cell 2 only",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "stack": {
+      "index": 29,
+      "collision": "map cell 2 only",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "barrel": {
+      "index": 30,
+      "collision": "map cell 2 only",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "terminal": {
+      "index": 31,
+      "collision": "passable interactable",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "tank": {
+      "index": 32,
+      "collision": "map cell 2 only",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "cache": {
+      "index": 33,
+      "collision": "passable interactable",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "gate": {
+      "index": 34,
+      "collision": "passable interactable",
+      "anchor": [
+        48,
+        92
+      ]
+    },
+    "pipe": {
+      "index": 35,
+      "collision": "map cell 2 only",
+      "anchor": [
+        48,
+        92
+      ]
+    }
+  },
+  "terrain": {
+    "file": "environment.png",
+    "size": [
+      768,
+      480
+    ],
+    "columns": 8,
+    "floor": [
+      0,
+      12
+    ],
+    "wall": [
+      12,
+      16
+    ],
+    "wallMask": "N=1 E=2 S=4 W=8; adjacent passable cells",
+    "propsStart": 28
+  },
+  "sha256": {
+    "hero.png": "dc3b6310ed10ab4d90f2965dc55fa46db2b41796ca2bf9fad49febd29e3b8c3b",
+    "guard.png": "501603e52227e3bd87f50b88650171d39cb148171ddee9ef37ce71ad968180e2",
+    "brute.png": "969435d1486798cb24ff8f1f3370f6f0b61cb2d74bf56939e496590af7b0a785",
+    "crawler.png": "a91a0afdffcf00a9cb91de67efd0404e57b3a479fab9833cb14f4320bf28ada6",
+    "environment.png": "eb974c887e34a7649ac01e3f0d1cd490e21d0988bbb00788d29417f9fc372f25"
+  }
+}

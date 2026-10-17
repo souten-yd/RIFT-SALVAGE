@@ -1,0 +1,94 @@
+{
+  "browser": "134.0.6998.35",
+  "platform": "linux",
+  "results": [
+    {
+      "name": "GAME-01 deploy button and decoded independent assets",
+      "status": "PASS"
+    },
+    {
+      "name": "SAVE-01 v0.4 saved mission loads without reset",
+      "status": "PASS"
+    },
+    {
+      "name": "Showcase sandbox leaves campaign localStorage byte-for-byte intact",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-02 move advances exactly one turn; animation cannot mutate logic",
+      "status": "PASS"
+    },
+    {
+      "name": "ART-01 independent animation changes pixels without advancing state",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-02 valid shot consumes exactly one round and one turn",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-03 blocked shot conserves ammo and turn",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-03 out-of-range shot conserves ammo",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-02 reload / heal / wait retain old outcomes and RNG",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-04 kill, loot, data and extract preserve complete economics",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-05 death loss and carried module semantics unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "GAME-03 100 procedural seeds: every objective/cache/exit reachable",
+      "status": "PASS"
+    },
+    {
+      "name": "SAVE-01 suspend/reload retains active mission and inventory",
+      "status": "PASS"
+    },
+    {
+      "name": "UI-02 modal / map block clicks and keys",
+      "status": "PASS"
+    },
+    {
+      "name": "UI-02 tap D-pad once; shoot-mode swipe never fires or moves",
+      "status": "PASS"
+    },
+    {
+      "name": "ART-02 invisible enemy cannot alter rendered pixels through fog",
+      "status": "PASS"
+    },
+    {
+      "name": "ART-04 HIGH/ECO changes DPR only, no game state",
+      "status": "PASS"
+    },
+    {
+      "name": "UI-01 mobile widths + landscape; targets and no horizontal overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "SAVE-01 unavailable storage fallback remains playable",
+      "status": "PASS"
+    },
+    {
+      "name": "ART loader missing images falls back visibly; game playable",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced motion stops sprite frame cycling and CSS animation",
+      "status": "PASS"
+    },
+    {
+      "name": "No JS exceptions",
+      "status": "PASS"
+    }
+  ]
+}

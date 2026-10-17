@@ -12,31 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check self-contained browser game
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          html=Path('index.html').read_text(encoding='utf-8')
-          assert html.lstrip().lower().startswith('<!doctype html>')
-          assert '<canvas' in html
-          assert html.count('<script') > 0
-          assert '</html>' in html
-          assert 'gameCanvas' in html
-          assert '出撃' in html
-          assert 'https://' not in ''.join(re.findall(r'<script[^>]+src="([^"]+)"', html))
-          print('Static game packaging check passed')
-          PY
-      - name: Extract and syntax-check JavaScript
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          html=Path('index.html').read_text(encoding='utf-8')
-          scripts=re.findall(r'<script(?:\s+[^>]*)?>(.*?)</script>',html,re.S|re.I)
-          assert scripts, 'Embedded JavaScript not found'
-          for i,script in enumerate(scripts):
-              Path(f'/tmp/rift-script-{i}.js').write_text(script,encoding='utf-8')
-          print(f'Found {len(scripts)} inline scripts')
-          PY
-          for file in /tmp/rift-script-*.js; do node --check "$file"; done
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y fonts-noto-cjk
+      - name: Package, compare gameplay with v0.4, and capture mobile playthrough
+        run: npm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mining-visual-evidence
+          path: tests/evidence/

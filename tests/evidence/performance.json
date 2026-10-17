@@ -1,0 +1,42 @@
+{
+  "environment": "Headless Chromium in Linux container, NOT iPhone Safari",
+  "browser": "134.0.6998.35",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "viewport": [
+    390,
+    844
+  ],
+  "scenario": "60s independent sprites + sinusoidal render-only camera; authoritative state unchanged",
+  "results": [
+    {
+      "requested": "HIGH",
+      "actual": "high",
+      "seconds": 60,
+      "count": 3601,
+      "medianFrameMs": 16.69999999999709,
+      "p95FrameMs": 16.700000000004366,
+      "medianFps": 59.880239520968516,
+      "stallsOver100ms": 0,
+      "dpr": 2,
+      "canvas": [
+        744,
+        764
+      ]
+    },
+    {
+      "requested": "ECO",
+      "actual": "balanced",
+      "seconds": 60,
+      "count": 3600,
+      "medianFrameMs": 16.69999999999709,
+      "p95FrameMs": 16.70000000001164,
+      "medianFps": 59.880239520968516,
+      "stallsOver100ms": 0,
+      "dpr": 2,
+      "canvas": [
+        465,
+        478
+      ]
+    }
+  ]
+}

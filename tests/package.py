@@ -8,6 +8,9 @@ for kind,a in m['actors'].items():
     assert all(v['frames']>=3 for v in a['states'].values())
 for name,sha in m['sha256'].items():
     assert hashlib.sha256((root/'assets/v1'/name).read_bytes()).hexdigest()==sha,name
+for p in (root/'tests/evidence').glob('*.webp'):
+    header=p.read_bytes()[:12]
+    assert p.stat().st_size>100 and header[:4]==b'RIFF' and header[8:12]==b'WEBP',p
 size=sum((root/'assets/v1'/f).stat().st_size for f in m['sha256'])
 assert size<8*1024*1024
 html=(root/'index.html').read_text();assert 'rift-salvage-save-v1' in html

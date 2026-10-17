@@ -8,7 +8,7 @@ First deliverable: a **playable, visually finished mining vertical slice** that 
 
 ## Preflight — mandatory before editing
 
-1. Checkout current default branch. Read `index.html` **as it exists now**, particularly game logic `generate`/`move`/`shoot`/`turn`/`interact`/`extract`/`die`; renderer `makeTile`/`makeSprite`/`renderLoop`/`draw`; DOM/buttons and ``window.__RIFT_TEST__`.
+1. Checkout current default branch. Read `index.html` **as it exists now**, particularly game logic `generate`/`move`/`shoot`/`turn`/`interact`/`extract`/`die`; renderer `makeTile`/`makeSprite`/`renderLoop`/`draw`; DOM/buttons and `window.__RIFT_TEST__`.
 2. Read `.github/workflows/pages.yml` and `.github/workflows/validate.yml`. Verify what is actually deployed, not simply documented.
 3. Capture a baseline Chromium screenshot and log/functional test. Verify if Pages site is reachable before asserting availability.
 4. Note any observed defect, baseline commit SHA, save-key compatibility and benchmark environment in PR description.

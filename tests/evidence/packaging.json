@@ -1,15 +1,25 @@
 {
-  "base": "http://127.0.0.1:36589/",
+  "base": "http://127.0.0.1:43457/",
   "results": [
     {
       "file": "index.html",
       "status": 200,
-      "sha256": "f94e9425267c60642f3d4feb04f15ba301cdd041d20552d90bd2e1c072744c97"
+      "sha256": "d6cfc1366c8cbb7345dee6b3762b91c4cc28436aa9f376bf5b1129a8f98ab306"
     },
     {
       "file": "space.js",
       "status": 200,
-      "sha256": "41b1b38476037cad2353df87838a7b3c69468edd01a9695e821baae5b88251e7"
+      "sha256": "28f7d6d2d334c690d682365d29ac6f28e3d8bdeff91f0817e016b4e205a3b888"
+    },
+    {
+      "file": "vendor/three/three.module.min.js",
+      "status": 200,
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6"
+    },
+    {
+      "file": "vendor/three/three.core.min.js",
+      "status": 200,
+      "sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de"
     },
     {
       "file": "assets/v1/manifest.json",

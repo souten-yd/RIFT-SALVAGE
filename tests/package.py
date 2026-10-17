@@ -28,6 +28,12 @@ assert not re.search(r'<script[^>]+src=["\']https?://',html)
 out=root/'_site';shutil.rmtree(out,ignore_errors=True);(out/'assets/v1').mkdir(parents=True)
 shutil.copy2(root/'index.html',out/'index.html')
 shutil.copy2(root/'space.js',out/'space.js')
+vendor=json.loads((root/'vendor/three/manifest.json').read_text())
+assert vendor['version']=='0.180.0' and vendor['license']=='MIT'
+assert set(p.name for p in (root/'vendor/three').iterdir())=={'manifest.json',*vendor['files']}
+for name,sha in vendor['files'].items():
+    assert hashlib.sha256((root/'vendor/three'/name).read_bytes()).hexdigest()==sha,name
+shutil.copytree(root/'vendor/three',out/'vendor/three')
 import subprocess
 subprocess.run(['node','--check',str(root/'space.js')],check=True,capture_output=True)
 for name in ['manifest.json',*m['sha256']]:shutil.copy2(root/'assets/v1'/name,out/'assets/v1'/name)

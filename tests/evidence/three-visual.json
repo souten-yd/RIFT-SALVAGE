@@ -1,0 +1,30 @@
+{
+  "browser": "134.0.6998.35",
+  "engine": {
+    "engine": "Three.js",
+    "revision": "180",
+    "drawCalls": 114,
+    "triangles": 13070,
+    "geometries": 14,
+    "shipMeshes": 67
+  },
+  "after": {
+    "engine": "Three.js",
+    "revision": "180",
+    "drawCalls": 76,
+    "triangles": 6180,
+    "geometries": 14,
+    "shipMeshes": 75
+  },
+  "checks": [
+    "real Three.js r180 scene and draw calls",
+    "idle rig cannot change campaign state",
+    "yaw and pitch articulate engines; banking responds",
+    "nozzles return smoothly to neutral",
+    "boost drives long exhaust; braking settles",
+    "menu pauses rig and gameplay",
+    "reduced motion suppresses banking",
+    "bounded mesh/geometry pool; no shader errors"
+  ],
+  "device": "Chromium touch emulation; physical Safari unverified"
+}

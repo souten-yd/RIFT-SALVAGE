@@ -1,0 +1,33 @@
+{
+  "browser": "134.0.6998.35",
+  "results": [
+    {
+      "theme": 0,
+      "status": "PASS",
+      "checks": "distinct render; camera/ECO/reload preserve state; normal deployment"
+    },
+    {
+      "theme": 1,
+      "status": "PASS",
+      "checks": "distinct render; camera/ECO/reload preserve state; normal deployment"
+    },
+    {
+      "theme": 2,
+      "status": "PASS",
+      "checks": "distinct render; camera/ECO/reload preserve state; normal deployment"
+    },
+    {
+      "status": "PASS",
+      "checks": "unexplored area uniformly black; no tile or light leaks"
+    },
+    {
+      "status": "PASS",
+      "checks": "remembered buried wall interior uniform, no repeated panels"
+    }
+  ],
+  "themeHashes": [
+    "3ad32b98b03ca36facedeb4c8d2b45bc832f1e5176d3ea18cca7c901b32e50d0",
+    "262b2a9fa5dee272a51452a4dcdc5a2c782f02c505dade914a998e5d41740d9f",
+    "6c5170e30c9253cc24cbdf2f5dc9eae3072f5bafda0d07adb1768c1a5ef1a300"
+  ]
+}

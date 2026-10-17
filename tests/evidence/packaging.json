@@ -1,15 +1,15 @@
 {
-  "base": "http://127.0.0.1:42209/",
+  "base": "http://127.0.0.1:42925/",
   "results": [
     {
       "file": "index.html",
       "status": 200,
-      "sha256": "2c005ae9fbb3ecbd2883f1ca775aa9b82098547c1a9c82d0615e745e54c2fe43"
+      "sha256": "d5f563b64fdd4c18e232ec566e48847486579a21e44434d66dd65aa853523cf7"
     },
     {
       "file": "assets/v1/manifest.json",
       "status": 200,
-      "sha256": "6f970bac644f14350512b7559080bd0c970d26efcf3d1b612c96a2f52f5f7094"
+      "sha256": "e81c09c4f177ad55ccefde4ac7c606d892ef1621e0ee2475cabde38144c087a8"
     },
     {
       "file": "assets/v1/hero.png",
@@ -35,6 +35,11 @@
       "file": "assets/v1/environment.png",
       "status": 200,
       "sha256": "eb974c887e34a7649ac01e3f0d1cd490e21d0988bbb00788d29417f9fc372f25"
+    },
+    {
+      "file": "assets/v1/themed-props.png",
+      "status": 200,
+      "sha256": "d62dcca5ccef9212857aff31a1c09cc397c70d3c7cbaee288000bf09ce9f07a8"
     }
   ]
 }

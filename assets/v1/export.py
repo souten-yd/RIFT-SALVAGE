@@ -97,5 +97,7 @@ for i,im in enumerate(frames):atlas.alpha_composite(im,(i%8*CELL,i//8*CELL))
 atlas.save(ROOT/'environment.png',optimize=True)
 manifest['terrain']={'file':'environment.png','size':list(atlas.size),'columns':8,'floor':[0,12],'wall':[12,16],'wallMask':'N=1 E=2 S=4 W=8; adjacent passable cells','propsStart':28}
 for f in ['hero.png','guard.png','brute.png','crawler.png','environment.png']:manifest.setdefault('sha256',{})[f]=hashlib.sha256((ROOT/f).read_bytes()).hexdigest()
+from export_themes import augment
+manifest=augment(manifest)
 (ROOT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print('Exported',sum((ROOT/f).stat().st_size for f in manifest['sha256']),'runtime bytes')

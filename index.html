@@ -316,7 +316,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   function deploy(){
     if(s)return;
     const c=save.contract,w=weapons[save.weapon];
-    s={contract:c,weapon:save.weapon,module:save.selectedModule,rngValue:(Math.random()*0x7fffffff)|0,map:[],seen:[],enemies:[],caches:[],player:{x:0,y:0,hp:100+save.armor*15+(save.selectedModule==='plate'?15:0),max:100+save.armor*15+(save.selectedModule==='plate'?15:0),ammo:w.capacity+(save.selectedModule==='mag'?4:0),reserve:w.reserve,meds:2+save.supplies+(save.selectedModule==='injector'?1:0),bleed:false},turn:0,rift:0,cargo:0,items:[],tech:0,data:false,logs:['配備完了。金色コンテナを調べて物資を回収せよ。']};
+    s={contract:c,weapon:save.weapon,module:save.selectedModule,rngValue:(Math.random()*0x7fffffff)|0,map:[],seen:[],enemies:[],caches:[],player:{x:0,y:0,hp:100+save.armor*15+(save.selectedModule==='plate'?15:0),max:100+save.armor*15+(save.selectedModule==='plate'?15:0),ammo:w.capacity+(save.selectedModule==='mag'?4:0),reserve:w.reserve,meds:2+save.supplies+(save.selectedModule==='injector'?1:0),bleed:false},turn:0,rift:0,cargo:0,items:[],tech:0,data:false,logs:['配備完了。SALVAGE表示の回収容器を調べて物資を回収せよ。']};
     generate();$('miniMapPanel').hidden=true;s.seen=Array.from({length:SIZE},()=>Array(SIZE).fill(false));shownVisionKey='';camera={x:s.player.x,y:s.player.y};heroSlide=null;enemyPrevious.clear();persist();mode='move';renderMission();
     // Deployment button is at the bottom of the ship page. Return to the new scene's top.
     window.scrollTo(0,0);
@@ -446,6 +446,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     $('shipScreen').hidden=true;$('missionScreen').hidden=false;$('headerState').textContent='MISSION LIVE';
     const c=contracts[s.contract],p=s.player;
     $('missionName').textContent=`${s.showcase?'QA / ':''}${c.number} / ${c.site}`;
+    document.querySelector('.map-tag').textContent=`◉ LIVE FEED / ${c.site} · 0.5`;
     $('missionObjective').textContent=s.data?'目標: 脱出ポイントに帰還':'目標: 緑色のデータ端末を確保';
     $('turnNum').textContent=String(s.turn).padStart(3,'0');
     $('healthText').textContent=p.hp+' / '+p.max;$('healthFill').style.width=Math.max(0,p.hp/p.max*100)+'%';
@@ -597,7 +598,12 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   const art={status:'loading',images:{},manifest:null,error:''};
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   const chunks=new Map(), lightTextures=new Map(), poses=new Map();
-  let cachedMap=null, renderClock=null, frameSamples=[], cameraProbe=null;
+  let cachedMap=null, cachedTheme=null, renderClock=null, frameSamples=[], cameraProbe=null;
+  const fallbackTheme={id:'mining',label:'MINING',floor:[22,29,33],wall:[32,36,37],accent:'#d99c4c',light:'#ffae59',panel:[193,137],wallDepth:20,covers:['crate','stack','barrel'],loot:['cache'],debris:null};
+  function themeProfile(){return art.manifest?.themes?.[s?.contract]||fallbackTheme;}
+  // Cover is part of a room, not a wall. Never expose buried wall interiors.
+  function roomCell(x,y){return inBounds(x,y)&&tile(x,y)!==0;}
+  function wallMask(x,y){return dirs.reduce((mask,[dx,dy],i)=>mask|(roomCell(x+dx,y+dy)?1<<i:0),0);}
   const LAYERS=['ground','structure','props','units','effects','fog','tactical','DOM'];
   function worldToScreen(x,y){return [view.ox+(x-view.left)*view.tile,view.oy+(y-view.top)*view.tile];}
   function assetNotice(message){const n=$('artNotice');n.textContent=message;n.hidden=!message;}
@@ -607,7 +613,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     try{
       const response=await fetch('assets/v1/manifest.json',{signal:abort.signal});if(!response.ok)throw new Error('manifest '+response.status);
       const m=await response.json();art.manifest=m;
-      const files=[...Object.values(m.actors).map(a=>a.file),m.terrain.file];
+      const files=[...Object.values(m.actors).map(a=>a.file),m.terrain.file,...(m.themedProps?[m.themedProps.file]:[])];
       await Promise.all(files.map(file=>new Promise((resolve,reject)=>{
         const im=new Image(),timer=setTimeout(()=>reject(new Error(file+' timeout')),12000);
         im.onload=async()=>{try{await im.decode();art.images[file]=im;clearTimeout(timer);resolve();}catch(e){clearTimeout(timer);reject(e);}};
@@ -620,7 +626,8 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   function atlasFrame(image,index,x,y,w,h){ctx.drawImage(image,index%8*96,Math.floor(index/8)*96,96,96,Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h));}
   function environment(name,x,y,t){
     if(art.status!=='ready'){drawFallbackObject(x,y,t,name);return;}
-    atlasFrame(art.images['environment.png'],art.manifest.environment[name].index,x,y,t,t);
+    const sprite=art.manifest.themedProps?.sprites[name]||art.manifest.environment[name];
+    atlasFrame(art.images[sprite.file||'environment.png'],sprite.index,x,y,t,t);
   }
   function drawFallbackObject(x,y,t,name){
     ctx.fillStyle=name==='terminal'?'#45b9b6':name==='tank'?'#a33d50':'#6f7780';ctx.fillRect(x+t*.12,y+t*.18,t*.76,t*.68);
@@ -634,7 +641,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
     ctx.imageSmoothingEnabled=false;
     const t=Math.min(w/VIEW_W,h/VIEW_H);view={left:camera.x-(VIEW_W-1)/2,top:camera.y-(VIEW_H-1)/2,tile:t,ox:(w-t*VIEW_W)/2,oy:(h-t*VIEW_H)/2,scale:dpr};
-    if(cachedMap!==s.map){cachedMap=s.map;chunks.clear();poses.clear();effects=[];}
+    if(cachedMap!==s.map||cachedTheme!==s.contract){cachedMap=s.map;cachedTheme=s.contract;chunks.clear();poses.clear();effects=[];}
     const frame={time,w,h,t,lights:[],bounds:{x:Math.floor(view.left)-2,y:Math.floor(view.top)-2}};
     ctx.fillStyle='#03080d';ctx.fillRect(0,0,w,h);
     drawGroundLayer(frame);drawStructureLayer(frame);drawPropsLayer(frame);drawUnitLayer(frame);drawEffectsLayer(frame);drawFogLayer(frame);drawTacticalLayer(frame);
@@ -642,9 +649,9 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   function eachCell(f,visit){for(let y=f.bounds.y;y<f.bounds.y+VIEW_H+5;y++)for(let x=f.bounds.x;x<f.bounds.x+VIEW_W+5;x++){if(!inBounds(x,y))continue;const [px,py]=worldToScreen(x,y);visit(x,y,px,py,tile(x,y));}}
   // Material coordinates are independent of collision cells. Adjacent cache chunks
   // evaluate the same world-pixel field, so neither tiles nor cache borders show.
-  function floorPixel(x,y){
-    const band=Math.floor(y/137),offset=(hash(band,23,81)%101),u=x+offset;
-    const plate=Math.floor(u/193),seamY=y%137,seamX=((u%193)+193)%193;
+  function floorPixel(x,y,theme){
+    const [pw,ph]=theme.panel,band=Math.floor(y/ph),offset=(hash(band,23,81)%101),u=x+offset;
+    const plate=Math.floor(u/pw),seamY=y%ph,seamX=((u%pw)+pw)%pw;
     const coarse=hash(Math.floor(x/9),Math.floor(y/7),83)%7;
     const grain=hash(x,y,89)%5;
     const brushed=hash(Math.floor(x/17),y,91)%4;
@@ -652,66 +659,102 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     const oil=(Math.sin(x*.027+Math.sin(y*.039)*1.7)+Math.cos(y*.033-x*.009));
     const wet=oil>1.15+(grain-2)*.08;
     let v=coarse+grain+brushed+(hash(plate,band,97)%5);
-    if(wet)v-=9;
+    if(wet)v-=theme.id==='research'?4:9;
     if(seamY===0||seamX===0)v-=10;
     if(seamY===1||seamX===1)v+=5;
-    if((seamY===5||seamY===131)&&(seamX===5||seamX===187))v+=24;
+    if((seamY===5||seamY===ph-6)&&(seamX===5||seamX===pw-6))v+=24;
     // Short chipped horizontal highlights, grouped into sparse pixel clusters.
     if(hash(Math.floor(x/11),y,101)%137===0&&x%11<7)v+=14;
     // Paired service cables snake across plate seams instead of following cells.
     const cable=((x+Math.round(Math.sin(y*.009)*19)+Math.floor(y/211)*3)%431+431)%431;
-    if(cable<2||cable===5)v-=15;
-    if(cable===2||cable===6)v+=9;
-    return [Math.max(6,17+v),Math.max(13,29+v),Math.max(20,37+v)];
+    if(theme.id!=='research'){if(cable<2||cable===5)v-=15;if(cable===2||cable===6)v+=9;}
+    // Lab: inset service channels. Ship: narrow ribbed anti-slip deck strips.
+    if(theme.id==='research'&&seamX>pw-9&&seamX<pw-4)v+=seamY%23<13?10:-5;
+    if(theme.id==='derelict'&&seamX>pw-28&&seamX<pw-8)v+=(y%6<2?-12:3);
+    return theme.floor.map((c,i)=>Math.max(6+i*4,c+v));
+  }
+  function wallPixel(x,y,mask,theme){
+    // Each face is a strip on the room-facing edge. Shared world coordinates
+    // keep pipes, ribs and seams continuous across adjacent logical wall cells.
+    const px=x%48,py=y%48,distances=[py,47-px,47-py,px];
+    let depth=48,along=x;
+    for(let i=0;i<4;i++)if(mask&(1<<i)&&distances[i]<depth){depth=distances[i];along=i%2?y:x;}
+    if(depth>=theme.wallDepth)return [3,8,13];
+    let v=hash(along,depth,113)%5-2;
+    if(depth<2)v+=30;else if(depth<5)v-=16;
+    else if(depth===7||depth===11)v+=18;
+    else if(depth===8||depth===12)v-=12;
+    else if(depth>theme.wallDepth-5)v-=22;
+    if(along%151<3)v-=15;
+    if(along%73<5&&depth>4)v+=9;
+    if(theme.id==='derelict'&&hash(Math.floor(x/4),Math.floor(y/3),127)%5===0)return [53+v,32+v,26+v];
+    return theme.wall.map(c=>Math.max(3,c+v));
   }
   function drawGroundLayer(f){
     // 48 world pixels per cell gives readable pixel clusters at mobile scale.
     // 49 bounded 240px chunks: ~11 MiB, a quarter of the former terrain cache.
-    const n=5,sz=48;
+    const n=5,sz=48,theme=themeProfile();
     for(let cy=Math.floor(f.bounds.y/n);cy<=Math.floor((f.bounds.y+VIEW_H+4)/n);cy++)for(let cx=Math.floor(f.bounds.x/n);cx<=Math.floor((f.bounds.x+VIEW_W+4)/n);cx++){
       if(cx<0||cy<0||cx>=7||cy>=7)continue;
       const key=cx+','+cy;let chunk=chunks.get(key);
       if(!chunk){chunk=document.createElement('canvas');chunk.width=n*sz;chunk.height=n*sz;const g=chunk.getContext('2d');g.imageSmoothingEnabled=false;
         const pixels=g.createImageData(chunk.width,chunk.height);
+        const masks=Array.from({length:n*n},(_,i)=>{const x=cx*n+i%n,y=cy*n+Math.floor(i/n);return tile(x,y)===0?wallMask(x,y):-1;});
         for(let py=0;py<chunk.height;py++)for(let px=0;px<chunk.width;px++){
-          const c=floorPixel(cx*n*sz+px,cy*n*sz+py),i=(py*chunk.width+px)*4;
+          const wx=cx*n*sz+px,wy=cy*n*sz+py,gx=Math.floor(wx/sz),gy=Math.floor(wy/sz);
+          const mask=masks[Math.floor(py/sz)*n+Math.floor(px/sz)];
+          const c=mask>=0?wallPixel(wx,wy,mask,theme):floorPixel(wx,wy,theme),i=(py*chunk.width+px)*4;
           pixels.data[i]=c[0];pixels.data[i+1]=c[1];pixels.data[i+2]=c[2];pixels.data[i+3]=255;
         }g.putImageData(pixels,0,0);
         for(let yy=0;yy<n;yy++)for(let xx=0;xx<n;xx++){
           const x=cx*n+xx,y=cy*n+yy;
-          if(tile(x,y)!==0)continue;
-          if(art.status==='ready'){
-            const mask=dirs.reduce((v,[dx,dy],i)=>v|(open(x+dx,y+dy)?1<<i:0),0),index=12+mask;
-            g.drawImage(art.images['environment.png'],index%8*96,Math.floor(index/8)*96,96,96,xx*sz,yy*sz,sz,sz);
-          }else g.drawImage(getTile(true,x,y),xx*sz,yy*sz,sz,sz);
+          if(tile(x,y)!==1||[s.exit,s.terminal,...s.caches].some(p=>p.x===x&&p.y===y))continue;
+          const seed=hash(x,y,137),neighbors=dirs.filter(([dx,dy])=>roomCell(x+dx,y+dy)).length;
+          if(neighbors<3)continue;
+          if(seed%19===0){
+            // Flush maintenance grilles are passable floor detail, not cover.
+            g.fillStyle='#08131b';g.fillRect(xx*sz+9,yy*sz+14,29,20);
+            g.fillStyle=theme.accent;g.fillRect(xx*sz+9,yy*sz+13,29,1);
+            g.fillStyle='#48575e';for(let row=0;row<5;row++)g.fillRect(xx*sz+11,yy*sz+16+row*3,25,1);
+          }else if(seed%17===0&&art.status==='ready'&&theme.debris){
+            const sprite=art.manifest.themedProps.sprites[theme.debris];
+            const size=19+seed%13;g.save();g.translate(xx*sz+24,yy*sz+25);g.rotate((seed%4)*Math.PI/2);
+            g.drawImage(art.images[sprite.file],sprite.index%8*96,Math.floor(sprite.index/8)*96,96,96,-size/2,-size/2,size,size);g.restore();
+          }
         }chunks.set(key,chunk);
       }
       const [x,y]=worldToScreen(cx*n,cy*n),[right,bottom]=worldToScreen((cx+1)*n,(cy+1)*n);
       ctx.drawImage(chunk,Math.round(x),Math.round(y),Math.round(right)-Math.round(x),Math.round(bottom)-Math.round(y));
     }
   }
-  function coverKind(x,y){if(s.showcase){if(x===21&&y===17)return 'tank';if(x===12&&y===21)return 'pipe';}return ['crate','stack','barrel'][hash(x,y)%3];}
+  function coverKind(x,y){if(s.showcase){if(x===21&&y===17)return 'tank';if(x===12&&y===21)return 'pipe';}const types=themeProfile().covers;return types[hash(x,y)%types.length];}
   function drawStructureLayer(f){
     eachCell(f,(x,y,px,py,cell)=>{
       if(cell===1){if(tile(x,y-1)===0){ctx.fillStyle='#02060c99';ctx.fillRect(px,py,f.t,f.t*.28);}if(tile(x-1,y)===0){ctx.fillStyle='#01050b66';ctx.fillRect(px,py,f.t*.13,f.t);}return;}
-      if(cell===0&&dirs.some(([dx,dy])=>open(x+dx,y+dy))){
-        if(hash(x,y)%4===0){const red=hash(x,y)%3===0;const color=red?'#fc4f50':'#ffae59';ctx.fillStyle=color;ctx.fillRect(px+f.t*.36,py+f.t*.2,f.t*.28,f.t*.05);f.lights.push({x:x+.5,y:y+.3,color,r:1.7});}
+      if(cell===0&&shownVision.has(x+','+y)&&wallMask(x,y)){
+        if(hash(x,y)%5===0){const theme=themeProfile(),color=hash(x,y)%4===0?'#fc4f50':theme.light;
+          const [dx,dy]=dirs.find(([dx,dy])=>roomCell(x+dx,y+dy)),lx=x+.5+dx*.36,ly=y+.5+dy*.36;
+          const [sx,sy]=worldToScreen(lx,ly);ctx.fillStyle=color;ctx.fillRect(sx-f.t*.08,sy-f.t*.025,f.t*.16,f.t*.05);f.lights.push({x:lx,y:ly,color,r:1.7});}
       }
     });
     const signs=s.showcase?[{x:12,y:18,label:'A7'},{x:19,y:17,label:'B2'},{x:16,y:25,label:'B1'}]:[];
-    for(const p of signs){const [x,y]=worldToScreen(p.x,p.y);ctx.font=`bold ${f.t*.62}px monospace`;ctx.fillStyle='#a8b5b99a';ctx.textAlign='center';ctx.fillText(p.label,x+f.t*.5,y+f.t*.75);ctx.font=`${f.t*.17}px monospace`;ctx.fillText(p.label==='B1'?'EXIT':'MINING',x+f.t*.5,y+f.t*.95);}
+    for(const p of signs){if(!s.seen[p.y][p.x])continue;const [x,y]=worldToScreen(p.x,p.y);ctx.font=`bold ${f.t*.62}px monospace`;ctx.fillStyle='#a8b5b99a';ctx.textAlign='center';ctx.fillText(p.label,x+f.t*.5,y+f.t*.75);ctx.font=`${f.t*.17}px monospace`;ctx.fillText(p.label==='B1'?'EXIT':themeProfile().label,x+f.t*.5,y+f.t*.95);}
   }
   function drawPropsLayer(f){
     eachCell(f,(x,y,px,py,cell)=>{
-      if(cell!==2)return;
+      if(cell!==2||!shownVision.has(x+','+y))return;
       ctx.fillStyle='#0009';ctx.beginPath();ctx.ellipse(px+f.t*.6,py+f.t*.84,f.t*.5,f.t*.18,0,0,Math.PI*2);ctx.fill();
       const kind=coverKind(x,y);const size=kind==='tank'?1.65:1.1;environment(kind,px+f.t*(.5-size*.5),py+f.t*(.95-size),f.t*size);
       // Cyan edge denotes real physical cover, not a decorative obstacle.
       ctx.fillStyle='#d8aa6455';ctx.fillRect(px+f.t*.15,py+f.t*.85,f.t*.7,f.t*.035);
-      if(kind==='tank')f.lights.push({x:x+.5,y:y+.5,color:'#fc4f50',r:2.4});
+      if(['tank','cryo','reactor','server'].includes(kind))f.lights.push({x:x+.5,y:y+.5,color:kind==='tank'?'#fc4f50':themeProfile().light,r:2.4});
     });
     const props=[{...s.exit,kind:'gate'},...s.caches.filter(c=>!c.used).map(c=>({...c,kind:'cache'})),...(!s.data?[{...s.terminal,kind:'terminal'}]:[])].sort((a,b)=>a.y-b.y);
-    for(const p of props){if(!shownVision.has(p.x+','+p.y))continue;const [x,y]=worldToScreen(p.x,p.y);environment(p.kind,x-f.t*.12,y-f.t*.3,f.t*1.24);if(p.kind!=='cache')f.lights.push({x:p.x+.5,y:p.y+.5,color:'#45e6e1',r:2});}
+    for(const p of props){if(!shownVision.has(p.x+','+p.y))continue;const [x,y]=worldToScreen(p.x,p.y);
+      const types=themeProfile().loot,kind=p.kind==='cache'?types[hash(p.x,p.y,149)%types.length]:p.kind;
+      environment(kind,x-f.t*.12,y-f.t*.3,f.t*1.24);
+      if(p.kind==='cache'){ctx.fillStyle='#ffd580';ctx.font=`bold ${Math.max(8,f.t*.18)}px monospace`;ctx.textAlign='center';ctx.fillText('SALVAGE',x+f.t*.5,y+f.t*.98);}
+      else f.lights.push({x:p.x+.5,y:p.y+.5,color:'#45e6e1',r:2});}
   }
   function animationPose(entity,kind,moving,time){
     const key=kind==='hero'?'hero':entity.id;let p=poses.get(key);
@@ -808,7 +851,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     // Hidden cells remain fully clipped. Feather only INSIDE visible cells,
     // concealing staircase edges without revealing any additional intelligence.
     eachCell(f,(x,y,px,py)=>{const known=s.seen[y][x],visible=shownVision.has(x+','+y);
-      if(!visible){ctx.fillStyle=known?'#020811c9':'#03080d';ctx.fillRect(Math.floor(px),Math.floor(py),Math.ceil(f.t)+1,Math.ceil(f.t)+1);return;}
+      if(!visible){ctx.fillStyle=known?'#020811c9':'#03080d';ctx.fillRect(Math.round(px),Math.round(py),Math.round(px+f.t)-Math.round(px),Math.round(py+f.t)-Math.round(py));return;}
       const width=f.t*.43;
       for(const [dx,dy] of dirs){if(shownVision.has((x+dx)+','+(y+dy)))continue;
         const direction=dx===1?0:dy===1?1:dx===-1?2:3;

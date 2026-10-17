@@ -3,6 +3,16 @@ from pathlib import Path
 import json, hashlib, shutil, re
 root=Path(__file__).resolve().parents[1];m=json.loads((root/'assets/v1/manifest.json').read_text())
 assert len(m['actors'])==4 and m['terrain']['floor'][1]>=8 and m['terrain']['wall'][1]>=8
+assert [t['site'] for t in m['themes']]==['ASTRA-9','VESTA-6','NEREID-3']
+sprites=m['themedProps']['sprites']
+assert len(sprites)==24 and len({v['index'] for v in sprites.values()})==24
+assert len({tuple(t['panel']) for t in m['themes']})==3
+for theme in m['themes']:
+    assert len(theme['covers'])==5 and len(theme['loot'])==2
+    assert all(sprites[n]['role']=='physical-cover' for n in theme['covers'])
+    assert all(sprites[n]['role']=='loot-container' for n in theme['loot'])
+    assert sprites[theme['debris']]['role']=='floor-debris'
+assert len({n for t in m['themes'] for n in t['covers']})==15
 for kind,a in m['actors'].items():
     assert set(a['states'])=={'idle','walk','attack','hit','death'}
     assert all(v['frames']>=3 for v in a['states'].values())

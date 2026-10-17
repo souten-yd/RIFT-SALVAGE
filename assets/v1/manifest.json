@@ -3,7 +3,8 @@
   "license": "Original project art; generated for RIFT SALVAGE. No third-party game assets.",
   "source": [
     "source/actors.png",
-    "source/environment.png"
+    "source/environment.png",
+    "source/themed-props.png"
   ],
   "pipeline": "python3 assets/v1/export.py (Pillow 12.3.0)",
   "cell": [
@@ -275,13 +276,369 @@
       16
     ],
     "wallMask": "N=1 E=2 S=4 W=8; adjacent passable cells",
-    "propsStart": 28
+    "propsStart": 28,
+    "activeRenderer": "world-space themed floor and exposed wall edge strips; legacy atlas wall cells unused"
   },
   "sha256": {
     "hero.png": "dc3b6310ed10ab4d90f2965dc55fa46db2b41796ca2bf9fad49febd29e3b8c3b",
     "guard.png": "501603e52227e3bd87f50b88650171d39cb148171ddee9ef37ce71ad968180e2",
     "brute.png": "969435d1486798cb24ff8f1f3370f6f0b61cb2d74bf56939e496590af7b0a785",
     "crawler.png": "a91a0afdffcf00a9cb91de67efd0404e57b3a479fab9833cb14f4320bf28ada6",
-    "environment.png": "eb974c887e34a7649ac01e3f0d1cd490e21d0988bbb00788d29417f9fc372f25"
-  }
+    "environment.png": "eb974c887e34a7649ac01e3f0d1cd490e21d0988bbb00788d29417f9fc372f25",
+    "themed-props.png": "d62dcca5ccef9212857aff31a1c09cc397c70d3c7cbaee288000bf09ce9f07a8"
+  },
+  "themedProps": {
+    "file": "themed-props.png",
+    "size": [
+      768,
+      288
+    ],
+    "columns": 8,
+    "sprites": {
+      "ore_hopper": {
+        "file": "themed-props.png",
+        "index": 0,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "drill": {
+        "file": "themed-props.png",
+        "index": 1,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "compressor": {
+        "file": "themed-props.png",
+        "index": 2,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "spool": {
+        "file": "themed-props.png",
+        "index": 3,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "tool_chest": {
+        "file": "themed-props.png",
+        "index": 4,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "ore_debris": {
+        "file": "themed-props.png",
+        "index": 5,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "floor-debris",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "centrifuge": {
+        "file": "themed-props.png",
+        "index": 6,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "cryo": {
+        "file": "themed-props.png",
+        "index": 7,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "server": {
+        "file": "themed-props.png",
+        "index": 8,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "workbench": {
+        "file": "themed-props.png",
+        "index": 9,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "specimen_case": {
+        "file": "themed-props.png",
+        "index": 10,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "glass_debris": {
+        "file": "themed-props.png",
+        "index": 11,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "floor-debris",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "turbine": {
+        "file": "themed-props.png",
+        "index": 12,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "radar": {
+        "file": "themed-props.png",
+        "index": 13,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "ammo_rack": {
+        "file": "themed-props.png",
+        "index": 14,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "reactor": {
+        "file": "themed-props.png",
+        "index": 15,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "salvage_case": {
+        "file": "themed-props.png",
+        "index": 16,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "physical-cover",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "hull_debris": {
+        "file": "themed-props.png",
+        "index": 17,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "floor-debris",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "circuit_loot": {
+        "file": "themed-props.png",
+        "index": 18,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "mineral_loot": {
+        "file": "themed-props.png",
+        "index": 19,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "sample_loot": {
+        "file": "themed-props.png",
+        "index": 20,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "data_loot": {
+        "file": "themed-props.png",
+        "index": 21,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "parts_loot": {
+        "file": "themed-props.png",
+        "index": 22,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      },
+      "supply_loot": {
+        "file": "themed-props.png",
+        "index": 23,
+        "anchor": [
+          48,
+          90
+        ],
+        "role": "loot-container",
+        "collision": "existing map only; no added collision or rewards"
+      }
+    }
+  },
+  "themes": [
+    {
+      "id": "mining",
+      "site": "ASTRA-9",
+      "label": "MINING",
+      "floor": [
+        22,
+        29,
+        33
+      ],
+      "wall": [
+        32,
+        36,
+        37
+      ],
+      "accent": "#d99c4c",
+      "light": "#ffae59",
+      "panel": [
+        193,
+        137
+      ],
+      "covers": [
+        "ore_hopper",
+        "drill",
+        "compressor",
+        "spool",
+        "tool_chest"
+      ],
+      "debris": "ore_debris",
+      "loot": [
+        "circuit_loot",
+        "mineral_loot"
+      ],
+      "wallDepth": 20
+    },
+    {
+      "id": "research",
+      "site": "VESTA-6",
+      "label": "BIO LAB",
+      "floor": [
+        27,
+        39,
+        44
+      ],
+      "wall": [
+        51,
+        67,
+        73
+      ],
+      "accent": "#68c6c9",
+      "light": "#77dfe6",
+      "panel": [
+        229,
+        163
+      ],
+      "covers": [
+        "centrifuge",
+        "cryo",
+        "server",
+        "workbench",
+        "specimen_case"
+      ],
+      "debris": "glass_debris",
+      "loot": [
+        "sample_loot",
+        "data_loot"
+      ],
+      "wallDepth": 17
+    },
+    {
+      "id": "derelict",
+      "site": "NEREID-3",
+      "label": "DECK",
+      "floor": [
+        24,
+        29,
+        38
+      ],
+      "wall": [
+        38,
+        34,
+        35
+      ],
+      "accent": "#bc7155",
+      "light": "#fa6957",
+      "panel": [
+        149,
+        211
+      ],
+      "covers": [
+        "turbine",
+        "radar",
+        "ammo_rack",
+        "reactor",
+        "salvage_case"
+      ],
+      "debris": "hull_debris",
+      "loot": [
+        "parts_loot",
+        "supply_loot"
+      ],
+      "wallDepth": 22
+    }
+  ]
 }

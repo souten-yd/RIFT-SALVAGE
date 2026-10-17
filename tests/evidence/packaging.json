@@ -1,0 +1,40 @@
+{
+  "base": "http://127.0.0.1:41831/",
+  "results": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "e85925dc89f32e060e62dbb8a585fd7decabc1633d7bd05721c160f4f7d17fb1"
+    },
+    {
+      "file": "assets/v1/manifest.json",
+      "status": 200,
+      "sha256": "6f970bac644f14350512b7559080bd0c970d26efcf3d1b612c96a2f52f5f7094"
+    },
+    {
+      "file": "assets/v1/hero.png",
+      "status": 200,
+      "sha256": "dc3b6310ed10ab4d90f2965dc55fa46db2b41796ca2bf9fad49febd29e3b8c3b"
+    },
+    {
+      "file": "assets/v1/guard.png",
+      "status": 200,
+      "sha256": "501603e52227e3bd87f50b88650171d39cb148171ddee9ef37ce71ad968180e2"
+    },
+    {
+      "file": "assets/v1/brute.png",
+      "status": 200,
+      "sha256": "969435d1486798cb24ff8f1f3370f6f0b61cb2d74bf56939e496590af7b0a785"
+    },
+    {
+      "file": "assets/v1/crawler.png",
+      "status": 200,
+      "sha256": "a91a0afdffcf00a9cb91de67efd0404e57b3a479fab9833cb14f4320bf28ada6"
+    },
+    {
+      "file": "assets/v1/environment.png",
+      "status": 200,
+      "sha256": "eb974c887e34a7649ac01e3f0d1cd490e21d0988bbb00788d29417f9fc372f25"
+    }
+  ]
+}

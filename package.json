@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "playwright": "1.51.1"
+  },
+  "name": "rift-salvage",
+  "private": true,
+  "scripts": {
+    "test": "python3 tests/package.py && node tests/deploy.cjs && node tests/regression.cjs && node tests/capture.cjs",
+    "bench": "node tests/performance.cjs",
+    "package": "python3 tests/package.py"
+  }
+}

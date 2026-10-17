@@ -6,7 +6,7 @@ Baseline: `b052277394cffef31788aa9774e8c64c08e19bcb` (v0.4). This report disting
 
 - Canvas 2D passes: cached ground, structural faces, props, depth-sorted units, world effects, fog, tactical indicators, HTML controls. One grid-to-screen transform. Camera/animation never advance turns or roll combat RNG.
 - Original generated source atlases, deterministic export script and runtime PNGs under `assets/v1/`. Four cardinal facings per actor. Idle, articulated walk, recoil/attack, hit and death frames. Source artwork is not a gameplay screenshot and is never used as a full-scene layer.
-- Twelve floor variants, sixteen wall masks, physical crates/stacks/barrels, terminal, cache, exit gate, containment tank and pipe outlet. Cyan terminal light, warm wall lights, red tank, timed muzzle flashes/tracers/sparks/blood and drifting steam. No runtime image generation or per-tile/per-frame gradient construction.
+- Continuous world-space pixel metal (the twelve atlas floor variants remain in the asset package), sixteen wall masks, physical crates/stacks/barrels, terminal, cache, exit gate, containment tank and pipe outlet. Cyan terminal light, warm wall lights, red tank, timed muzzle flashes/tracers/sparks/blood and drifting steam. No runtime image generation or per-tile/per-frame gradient construction.
 - Optional authored 35×35 mining mission at `?showcase=1`; normal procedural missions are retained. The sandbox uses a separate **sessionStorage** key and never writes the campaign's `rift-salvage-save-v1` localStorage. Its rewards are sandbox-only. Enter from the ship's “採掘施設の検証用任務へ” button; return with “通常の母艦へ戻る”.
 - Loader/decode/12-second timeout, visible art failure with procedural fallback, DPR caps (HIGH 2 / ECO 1.25), bounded particle budget, reduced-motion support, hidden-tab animation cancellation and audio suspension.
 - 44px gameplay targets, portrait and landscape controls, overlay input blocking, pointer-ID tracking. Swipes in shooting mode do not shoot or move. Existing action costs, AI, collision, detection, RNG, rewards and save data are retained.
@@ -36,7 +36,7 @@ Linux container, AMD EPYC 9V74, headless Chromium 134.0.6998.35, CSS 390×844, d
 
 Median cadence ~59.88fps on this host. This does **not** establish iPhone rendering performance, GPU time or touch latency. Raw sample summary is in `tests/evidence/performance.json`. Run `npm run bench` for the same 2×60-second harness.
 
-Runtime atlases total 2,231,460 bytes (~2.13 MiB), below the 8MB target. Chunk cache holds at most 49 × 480×480 RGBA canvases (~43MiB worst case), plus ~14.6MiB decoded actor/environment atlases. Real Safari memory/eviction behavior is pending.
+Runtime atlases total 2,231,460 bytes (~2.13 MiB), below the 8MB target. Chunk cache holds at most 49 × 240×240 RGBA canvases (~10.8MiB worst case), plus ~14.6MiB decoded actor/environment atlases. Real Safari memory/eviction behavior is pending.
 
 ## Actual engine screenshots
 
@@ -54,10 +54,10 @@ All captures come from the live game engine. CSS-resolution WebP review copies a
 
 | Approved reference | Current implementation / gap |
 |---|---|
-| Dense dark metal, cyan PMC/terminal, red containment | Those materials and separated elements are present. Floor repetition remains more evident, and small-scale lighting is less detailed. |
+| Dense dark metal, cyan PMC/terminal, red containment | Those materials and separated elements are present. Floor seams, grime and cables now cross logical cells; small-scale lighting remains less detailed. |
 | Large cinematic character silhouettes | Rich original 4-way sprite art replaces geometric placeholders. Low-resolution frame rigs are still simpler than fully hand-drawn animation; no claim of production-quality animation parity. |
 | A7/B2/B1 composition | Authored optional map contains these markings, reachable terminal/loot/exit and physical cover. True line-of-sight can hide parts of the composition; it is not a permanently revealed promotional layout. |
-| Deep layered machinery, dense smoke/reflections | Props and warm/red/cyan lighting are independent. Reflections are tile material highlights, not full dynamic reflected sprites; steam is intentionally shallow/bounded. |
+| Deep layered machinery, dense smoke/reflections | Props and warm/red/cyan lighting are independent. Reflections are material highlights, not full dynamic reflected sprites; steam is intentionally shallow/bounded. |
 | Illustrated AP display | Deliberately absent: the authoritative game has no AP mechanic. |
 
 Open acceptance items: actual iPhone Safari full mission, safe-area/browser chrome behavior, two-thumb/multitouch ergonomics, 60-second HIGH/ECO measurements with exact iPhone/iOS/Safari versions. Linux WebKit was downloaded but cannot launch because GTK/GStreamer and related host libraries are missing; it is **not marked passed**. Frame snapshots are deterministic within the tested browser, but no cross-platform golden-pixel assertion is claimed. Movement path previews beyond immediately reachable adjacent tiles remain unimplemented. VESTA/NEREID currently share the new asset library; dedicated finished art sets are deferred.
@@ -69,3 +69,17 @@ Open the public HTTPS URL in Safari (not an HTML attachment preview). Confirm no
 ## Deployment status
 
 Baseline public URL returned HTTP 200 before implementation. Updated main/Pages verification will be reported in the implementation PR after CI and deployment; this report does not mark an unobserved deployment or iPhone session as passed.
+
+## Pixel floor follow-up (2026-10-17)
+
+Baseline `a3f8a5f` (PR #3). The previous 96px atlas tiles carried a square border and four rivets per logical cell, reinforcing a board-game grid. The ground now uses a cached 48px-per-cell world-space material field: staggered 193×137px plate seams, clustered metal grain, irregular dithered oil stains, chipped highlights and paired service cables. Their coordinates do not depend on collision-cell boundaries. Wall art, independent props, actors and lights are retained. Chunk edges use shared rounded screen coordinates.
+
+The player's selection is an ellipse underfoot; reachable cells use small cyan dots instead of filled boxes. Fog feathers only inside currently visible cells; hidden cells keep their existing full clipping. No combat, saves, map generation, RNG, rewards, collision or visibility logic changed.
+
+Matched captures are reproducible with `node tests/floor-review.cjs` (390×844, DPR 2, same optional showcase and frozen visual time 1000ms).
+
+| Before | After |
+|---|---|
+| ![Before](../tests/evidence/grid-before.webp) | ![After](../tests/evidence/grid-after.webp) |
+
+This follow-up is a requested visual refinement after the original PR was merged. iPhone Safari remains unverified; Chromium mobile emulation is not device evidence.

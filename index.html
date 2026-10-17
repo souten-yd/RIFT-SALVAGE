@@ -122,6 +122,28 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .mission-screen .map-wrap{height:clamp(240px,calc(100dvh - 460px),580px);aspect-ratio:auto}.mission-head{min-height:44px}.threat-strip{padding:4px 8px}.mission-head .mission-tools{flex-shrink:0}.map-tag{background:#06151bcc;padding:3px}.map-hint{font-size:9px}.log-box{padding:6px 8px}#logText{max-height:60px}.topbar .brand strong{letter-spacing:1px;font-size:16px}.brand small{letter-spacing:.4px}.mission-screen .map-wrap{background:#06101a}@media(orientation:landscape) and (max-height:500px){.mission-screen .map-wrap{height:calc(100dvh - 70px)}}
 #deathPreview{width:96px;height:96px;float:right;image-rendering:pixelated}.modal-card{max-height:90dvh;overflow:auto}
+/* Larger battlefield; keep every action and the familiar 44px D-pad. */
+.zoom-btn{position:absolute;right:6px;top:6px;min-width:64px;min-height:44px;border:1px solid #558e94;border-radius:5px;background:#071b24ed;color:#a7fff0;font-size:12px;z-index:1}
+body.in-mission .topbar{height:calc(44px + env(safe-area-inset-top))}
+body.in-mission .brand small{display:none}
+.mission-screen .mission-head{min-height:44px;padding:0 2px}
+.mission-screen .mission-tools button{padding:3px 5px}
+.mission-screen .hud{min-height:38px}
+.mission-screen .hud-caption{font-size:10px}
+.mission-screen .hud-number strong{font-size:14px}
+.mission-screen .map-wrap{height:clamp(280px,calc(100dvh - 370px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),720px)}
+.command-deck{display:grid;grid-template-columns:136px repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,44px);gap:2px 5px}
+.command-deck .mode-bar,.command-deck .control-bar,.command-deck .quick-actions{display:contents}
+.command-deck .dpad{grid-column:1;grid-row:1/4}
+.command-deck .mode-btn,.command-deck .quick-actions button{min-width:44px;min-height:44px;margin:0;padding:2px;font-size:12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.command-deck button span{font-size:14px;margin:0;padding:0;line-height:16px}
+.command-deck [data-mode=move]{grid-column:2;grid-row:1}.command-deck [data-mode=shoot]{grid-column:3;grid-row:1}.command-deck [data-mode=med]{grid-column:4;grid-row:1}
+.command-deck [data-mode=interact]{grid-column:2;grid-row:2}.command-deck #reloadBtn{grid-column:3;grid-row:2}.command-deck #interactBtn{grid-column:4;grid-row:2}
+.command-deck #exitBtn{grid-column:2;grid-row:3}.command-deck #endTurnBtn{grid-column:3/5;grid-row:3;flex-direction:row;gap:6px}
+.mission-screen .log-box{min-height:44px;padding:4px 7px}.mission-screen #logText{max-height:34px;overflow:auto;font-size:11px}
+.mission-screen .map-tag{max-width:calc(100% - 88px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+@media(max-width:360px){.command-deck{gap:2px}.command-deck .mode-btn,.command-deck .quick-actions button{font-size:11px}}
+@media(orientation:landscape) and (max-height:500px){.mission-screen{grid-template-rows:auto auto auto auto}.mission-screen .map-wrap{grid-column:1;grid-row:1/5;height:calc(100dvh - 60px);min-height:240px}.command-deck{grid-column:2;grid-row:3}.mission-screen .log-box{grid-column:2;grid-row:4}.mission-screen .threat-strip{display:none}.command-deck{grid-template-columns:136px repeat(3,minmax(0,1fr));gap:2px}.command-deck .mode-btn,.command-deck .quick-actions button{font-size:10px}.mission-screen{grid-template-columns:minmax(0,1fr) 280px}}
 </style>
   <title>RIFT // SALVAGE — v0.5 MINING REBUILD</title>
 </head>
@@ -178,9 +200,9 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     <div class="threat-strip"><span><i class="threat-dot"></i> HOSTILES <strong id="threatValue">00</strong></span><span><i class="data-dot"></i> OBJECTIVE <strong id="sectorValue">データ未回収</strong></span><span class="render-label">LIVE 2D</span></div>
     <div class="map-wrap"><div class="map-atmo" aria-hidden="true"></div><canvas id="gameCanvas" aria-label="探索マップ。タップで行動し、スワイプで移動" role="img"></canvas><div class="map-scan"></div><span class="map-tag">◉ LIVE FEED / ASTRA-9 · 0.5</span><span id="mapHint" class="map-hint">タップして移動</span><div class="map-corner map-corner-a"></div><div class="map-corner map-corner-b"></div></div>
     <div id="miniMapPanel" class="minimap-panel" hidden><div class="minimap-head">SECTOR SCAN / 探索済み区画 <button id="closeMap" aria-label="マップを閉じる" type="button">✕</button></div><canvas id="miniCanvas" width="280" height="280" aria-label="探索マップ"></canvas><p>白: 現在地 / 青緑: 撤収地点 / 金: 目標・物資 / 赤: 確認した敵</p></div>
-    <div class="mode-bar"><button class="mode-btn selected" data-mode="move"><span>⌖</span>移動</button><button class="mode-btn" data-mode="shoot"><span>◎</span>射撃</button><button class="mode-btn" data-mode="interact"><span>▣</span>調査</button><button class="mode-btn" data-mode="med"><span>✚</span>治療 <b id="medCount">2</b></button></div>
+    <div class="command-deck"><div class="mode-bar"><button class="mode-btn selected" data-mode="move"><span>⌖</span>移動</button><button class="mode-btn" data-mode="shoot"><span>◎</span>射撃</button><button class="mode-btn" data-mode="interact"><span>▣</span>調査</button><button class="mode-btn" data-mode="med"><span>✚</span>治療 <b id="medCount">2</b></button></div>
     <div class="control-bar"><div class="dpad"><button data-dir="up" class="up" aria-label="上に移動">▲</button><button data-dir="left" class="left" aria-label="左に移動">◀</button><button data-dir="wait" class="wait" aria-label="待機">•</button><button data-dir="right" class="right" aria-label="右に移動">▶</button><button data-dir="down" class="down" aria-label="下に移動">▼</button></div><div class="quick-actions"><button id="reloadBtn"><span>↻</span> リロード</button><button id="interactBtn"><span>◇</span> 調べる</button><button id="exitBtn"><span>⇧</span> 撤収</button><button id="endTurnBtn"><span>⏳</span> ターン終了</button></div></div>
-    <div class="log-box"><div class="log-label">◉ COMBAT LOG <span id="cargoLabel">積載: 0 CR</span></div><div id="logText">施設の通信を傍受中…</div></div>
+    </div><div class="log-box"><div class="log-label">◉ COMBAT LOG <span id="cargoLabel">積載: 0 CR</span></div><div id="logText">施設の通信を傍受中…</div></div>
    </section>
   </main>
  </div>
@@ -203,7 +225,9 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   const canvas = $('gameCanvas'), ctx = canvas && canvas.getContext('2d', { alpha: false });
   const SHOWCASE = new URLSearchParams(location.search).get('showcase')==='1';
   const storage = () => SHOWCASE ? sessionStorage : localStorage;
-  const VIEW_W = 11, VIEW_H = 13, SIZE = 35, KEY = 'rift-salvage-save-v1';
+  let VIEW_W = 9, VIEW_H = 11, zoomIndex=0;
+  const zoomLevels=[{w:9,h:11,label:'大'},{w:7,h:9,label:'特大'},{w:11,h:13,label:'広域'}];
+  const SIZE = 35, KEY = 'rift-salvage-save-v1';
   const weapons = { rifle:{name:'AR-7',capacity:9,range:7,damage:29,accuracy:.91,reserve:45}, shotgun:{name:'SG-4',capacity:5,range:4,damage:48,accuracy:.83,reserve:25} };
   const moduleDefs = {plate:{name:'合金装甲',hint:'最大HP +15'},injector:{name:'医療インジェクター',hint:'医療品 +1'},mag:{name:'拡張弾倉',hint:'弾倉 +4'},payload:{name:'高威力弾',hint:'射撃ダメージ +10'}};
   const contracts = [
@@ -230,6 +254,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   function showModal(kicker,title,body,stats,cb){$('modalKicker').textContent=kicker;$('modalTitle').textContent=title;$('modalBody').textContent=body;$('modalStats').textContent=stats;$('modal').hidden=false;$('deathPreview').hidden=kicker!=='SIGNAL LOST';modalCallback=cb||(()=>{});}
   $('modalButton').addEventListener('click',()=>{ $('modal').hidden=true;modalCallback(); });
   function renderShip(){
+    document.body.classList.remove('in-mission');
     $('deployBtn').disabled=false;$('deployBtn').innerHTML='出撃する <span>↗</span>';
     $('shipScreen').hidden=false;$('missionScreen').hidden=true;$('miniMapPanel').hidden=true;$('headerState').textContent='SHIP ONLINE';
     lastFrame=0; if(animationHandle){cancelAnimationFrame(animationHandle);animationHandle=0;}
@@ -433,6 +458,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     if(dist(s.exit,s.player)>1){notify('脱出地点まで戻ってください');return;}
     const done=s.data,pay=done?contracts[s.contract].fee:0,loot=s.cargo,total=pay+loot;
     save.credits+=total;if(done)save.wins++;save.modules.push(...(s.items||[]));
+    if(save.space&&window.RiftOrbitRecovery)window.RiftOrbitRecovery(s.contract,done,s.cargo);
     const stats=`契約報酬 ${pay} CR\n回収物資 ${loot} CR\n回収装備 ${(s.items||[]).length} 個\n獲得総額 ${total} CR`;
     s=null;persist();beep(900,.2,'sine');showModal(done?'MISSION COMPLETE':'EMERGENCY EXTRACTION',done?'契約達成・帰還成功':'任務中断・緊急脱出',done?'データを母艦に送信し、回収物資を保管しました。次の出撃に備えて設備を強化できます。':'目標の確保前に撤収しました。契約報酬はありませんが、持ち帰った物資は失われません。',stats,renderShip);
   }
@@ -443,6 +469,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   function setMode(m){if(!s)return;if(m==='med'){med();return;}mode=m;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));$('mapHint').textContent=({move:'タップして移動',shoot:'敵をタップして射撃',interact:'対象をタップして調査'})[mode];}
   function renderMission(){
     if(!s)return;
+    document.body.classList.add('in-mission');
     $('shipScreen').hidden=true;$('missionScreen').hidden=false;$('headerState').textContent='MISSION LIVE';
     const c=contracts[s.contract],p=s.player;
     $('missionName').textContent=`${s.showcase?'QA / ':''}${c.number} / ${c.site}`;
@@ -880,6 +907,10 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
     mark(s.player,'#b6fff8');
   }
   function updateQuality(){const btn=$('qualityBtn');if(btn){btn.textContent=graphics==='high'?'画質 HIGH':'画質 ECO';btn.setAttribute('aria-label',graphics==='high'?'軽量画質に変更':'高精細画質に変更');}if(s)draw();}
+  const zoomButton=document.createElement('button');zoomButton.id='zoomBtn';zoomButton.className='zoom-btn';zoomButton.type='button';
+  function updateZoom(){const level=zoomLevels[zoomIndex];VIEW_W=level.w;VIEW_H=level.h;zoomButton.textContent='表示 '+level.label;zoomButton.setAttribute('aria-label',`表示倍率 ${level.label}。タップして${zoomLevels[(zoomIndex+1)%zoomLevels.length].label}に切替`);if(s)draw();}
+  zoomButton.onclick=()=>{if(!s||inputBlocked())return;pointerStart=null;zoomIndex=(zoomIndex+1)%zoomLevels.length;updateZoom();};
+  document.querySelector('.map-wrap').append(zoomButton);updateZoom();
   $('qualityBtn').onclick=()=>{graphics=graphics==='high'?'balanced':'high';slowFrames=0;frameAverage=16;updateQuality();notify(graphics==='high'?'高精細モード':'省電力モード');};
   $('mapToggle').onclick=()=>{const panel=$('miniMapPanel');panel.hidden=!panel.hidden;if(!panel.hidden)drawMiniMap();};
   $('closeMap').onclick=()=>{$('miniMapPanel').hidden=true;};
@@ -930,8 +961,11 @@ body{background:radial-gradient(ellipse at 50% -10%,#163039 0,#070e15 49%,#05090
   }catch(error){startupError('ゲームの初期化に失敗しました。',error);}
   // Single-file edition does not require a service worker.
   window.__RIFT_TEST__={getArtInfo:()=>({status:art.status,error:art.error,layers:LAYERS,chunks:chunks.size,poses:[...poses.entries()]}),setCameraForTest:p=>{cameraProbe=p;},getFrameSamples:()=>frameSamples.slice(),resetFrameSamples:()=>{frameSamples=[];},setVisualTime:t=>{renderClock=t;draw();},getView:()=>({...view}),lineOfSight,nextStep,visible,getState:()=>({save:JSON.parse(JSON.stringify(save)),mission:s?JSON.parse(JSON.stringify(s)):null}),deploy,move,interact,reload,shoot,med,turn,extract,renderShip,getFrameInfo:()=>({active:!!animationHandle,visible:shownVision.size,atlas:tileAtlas.size,spriteCount:sprites.size,graphics,averageFrameMs:Math.round(frameAverage),covers:s?.map.flat().filter(t=>t===2).length||0,brutes:s?.enemies.filter(e=>e.kind==='brute').length||0})};
+  // Narrow campaign bridge: space has its own progression; ground combat remains authoritative here.
+  window.RiftCampaign={readSpace:()=>save.space||null,writeSpace:value=>{save.space=value;persist();},hasMission:()=>!!s,land:contract=>{if(s)return false;save.contract=contract;persist();deploy();return true;},notify};
 })();
 
 </script>
+<script src="space.js"></script>
 </body>
 </html>

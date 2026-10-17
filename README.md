@@ -1,12 +1,20 @@
 # RIFT // SALVAGE
 
-iPhone Safari 向けの独立したオリジナルSFターン制脱出ローグライク（開発版）。
+iPhone Safari 向けのオリジナルSF探索ゲーム（開発版）。3D宇宙航行とターン制の施設潜入を組み合わせています。
 
 ## ブラウザで遊ぶ
 
 GitHub Pages の公開後は https://souten-yd.github.io/RIFT-SALVAGE/ から起動できます。
 
-このリポジトリは静的サイトです。アプリのメイン画面は `index.html` で、ゲームコード・CSSはHTML内、戦闘用画像は `assets/v1/` にあります。サーバでビルドや実行を行う必要はありません。
+このリポジトリは静的サイトです。施設戦闘は `index.html`、宇宙航行は `space.js`、戦闘用画像は `assets/v1/` にあります。サーバでビルドや実行を行う必要はありません。
+
+- 「宇宙へ出航」から3D自由航行。ドラッグで旋回、推力スライダーで前進、長押しでブースト・採掘レーザー
+- 「星図 / 改造」で4宙域をワープ移動。危険宙域には推進器の強化が必要
+- 回収資源を母星EDENへ持ち帰り、推進器・シールド・レーザー・貨物室を改造
+- 惑星の着陸ゲートに接近して既存の施設戦闘へ。持ち帰った素材で船と母星を強化
+- 大気浄化・海洋再生・生態系再建を完了し、母星再生を目指す
+
+[宇宙航行の設計・操作・検証範囲](docs/ORBITAL_FRONTIER.md)。4宙域を遊べる初期実装で、着陸はシーン切替です。
 
 - 任務を選択して「出撃する」
 - マップをタップして移動、射撃・リロード・治療
@@ -14,7 +22,7 @@ GitHub Pages の公開後は https://souten-yd.github.io/RIFT-SALVAGE/ から起
 - 帰還後、母艦で装備と永続強化を管理
 - Safariの「共有」→「ホーム画面に追加」でアプリのように起動
 
-v0.5 MINING REBUILD。iPhone実機での60fpsは未計測です。
+地上画面も拡大しました。右上の「表示」で大・特大・広域を切り替えられます。iPhone Safari実機での宇宙航行・フレームレートは未検証です。
 
 施設別に素材と設備を描き分けています。ASTRA-9は金属床・銅配管と採掘機材、VESTA-6は白い壁・サービス溝と研究設備、NEREID-3は錆びた隔壁・リブ付き甲板と軍用残骸です。テーマ別の設備15種・回収容器6種・床の破片3種を追加しました。回収容器は外観のバリエーションで、報酬や装備効果は従来どおりです。
 
@@ -24,7 +32,7 @@ Quasimorphの公式移植ではありません。ゲームのソース・アセ�
 
 ## 配布・検証
 
-GitHub Pagesの公開方式はGitHub Actionsです。`.github/workflows/pages.yml` が `python3 tests/package.py` でHTMLと必要な画像・manifestを `_site` に梱包します。`index.html` だけをコピーすると新画像が欠落します。
+GitHub Pagesの公開方式はGitHub Actionsです。`.github/workflows/pages.yml` が `python3 tests/package.py` でHTML・`space.js`・必要な画像・manifestを `_site` に梱包します。`index.html` だけをコピーすると宇宙航行と新画像が欠落します。
 
 開発はPRを基本とし、mainのファイルと実際の挙動を検証してからマージします。
 

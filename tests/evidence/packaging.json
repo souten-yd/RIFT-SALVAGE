@@ -1,10 +1,15 @@
 {
-  "base": "http://127.0.0.1:42925/",
+  "base": "http://127.0.0.1:36589/",
   "results": [
     {
       "file": "index.html",
       "status": 200,
-      "sha256": "d5f563b64fdd4c18e232ec566e48847486579a21e44434d66dd65aa853523cf7"
+      "sha256": "f94e9425267c60642f3d4feb04f15ba301cdd041d20552d90bd2e1c072744c97"
+    },
+    {
+      "file": "space.js",
+      "status": 200,
+      "sha256": "41b1b38476037cad2353df87838a7b3c69468edd01a9695e821baae5b88251e7"
     },
     {
       "file": "assets/v1/manifest.json",

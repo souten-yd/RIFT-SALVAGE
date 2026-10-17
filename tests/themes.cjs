@@ -38,7 +38,7 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require(
   // Previously explored buried wall interiors must also remain solid, not atlas mosaics.
   fog.mission.seen=fog.mission.seen.map(row=>row.map(()=>true));await load(fog);
   await p.evaluate(()=>__RIFT_TEST__.setCameraForTest({x:3,y:3}));await p.waitForTimeout(100);await p.evaluate(()=>__RIFT_TEST__.setVisualTime(1000));
-  const buried=await p.evaluate(()=>{const c=document.getElementById('gameCanvas'),g=c.getContext('2d'),a=[];for(let y=180;y<340;y+=7)for(let x=200;x<360;x+=7)a.push([...g.getImageData(x,y,1,1).data].join(','));return [...new Set(a)];});
+  const buried=await p.evaluate(()=>{const c=document.getElementById('gameCanvas'),g=c.getContext('2d'),a=[],v=__RIFT_TEST__.getView();const x0=v.ox+(2-v.left)*v.tile,y0=v.oy+(2-v.top)*v.tile;for(let y=y0;y<y0+v.tile;y+=7)for(let x=x0;x<x0+v.tile;x+=7)a.push([...g.getImageData(Math.floor(x),Math.floor(y),1,1).data].join(','));return [...new Set(a)];});
   assert.equal(buried.length,1);results.push({status:'PASS',checks:'remembered buried wall interior uniform, no repeated panels'});
   assert.deepEqual(errors,[]);fs.writeFileSync('tests/evidence/themes.json',JSON.stringify({browser:await browser.version(),results,themeHashes:hashes},null,2));
   await browser.close();server.close();console.log('PASS themes: 3 contracts, distinct materials, saves, fog and buried walls');

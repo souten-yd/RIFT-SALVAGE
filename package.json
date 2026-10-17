@@ -5,7 +5,7 @@
   "name": "rift-salvage",
   "private": true,
   "scripts": {
-    "test": "python3 tests/package.py && node tests/deploy.cjs && node tests/regression.cjs && node tests/themes.cjs && node tests/capture.cjs",
+    "test": "python3 tests/package.py && node tests/deploy.cjs && node tests/regression.cjs && node tests/themes.cjs && node tests/capture.cjs && node tests/orbit.cjs",
     "bench": "node tests/performance.cjs",
     "package": "python3 tests/package.py"
   }

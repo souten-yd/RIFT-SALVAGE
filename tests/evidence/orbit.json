@@ -1,0 +1,24 @@
+{
+  "browser": "134.0.6998.35",
+  "device": "Chromium touch emulation; not physical iPhone Safari",
+  "results": [
+    "fresh game: aimed laser destroys asteroid and collects crystal",
+    "warp consumes energy; dangerous systems locked by propulsion level",
+    "boost translates in 3D; drag changes yaw and pitch; brake stops",
+    "position, cargo, hull and progression survive reload; legacy credits unchanged",
+    "home docking banks cargo and repairs; all four refits charge exact resources and change capabilities; paint saved",
+    "all three restoration projects spend resources; EDEN completion persists and changes planet color",
+    "320/375/390/430 portrait + 844 landscape: all controls reachable, 44px touch targets",
+    "aimed laser kills an actual pursuing hostile and grants salvage",
+    "hostile fire causes rescue to EDEN; half cargo loss and upgrades retained",
+    "orbit landing starts VESTA ground combat; 3 zoom levels enlarge tiles without changing gameplay",
+    "successful ground extraction adds ship materials once, preserving original contract credits",
+    "missing WebGL gives a visible error; saved campaign and ground play remain accessible"
+  ],
+  "tileSizesCSS": [
+    41.333333333333336,
+    52.44444444444444,
+    33.81818181818182
+  ],
+  "lateGame": "loaded-save fixtures, not a claimed from-scratch campaign"
+}

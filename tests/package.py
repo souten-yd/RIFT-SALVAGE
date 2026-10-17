@@ -27,6 +27,9 @@ html=(root/'index.html').read_text();assert 'rift-salvage-save-v1' in html
 assert not re.search(r'<script[^>]+src=["\']https?://',html)
 out=root/'_site';shutil.rmtree(out,ignore_errors=True);(out/'assets/v1').mkdir(parents=True)
 shutil.copy2(root/'index.html',out/'index.html')
+shutil.copy2(root/'space.js',out/'space.js')
+import subprocess
+subprocess.run(['node','--check',str(root/'space.js')],check=True,capture_output=True)
 for name in ['manifest.json',*m['sha256']]:shutil.copy2(root/'assets/v1'/name,out/'assets/v1'/name)
 (out/'.nojekyll').touch()
 for i,script in enumerate(re.findall(r'<script(?:\s+[^>]*)?>(.*?)</script>',html,re.S|re.I)):
